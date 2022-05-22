@@ -1,25 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CheckNFTs from "./api/checkNFTs.js";
 import CastVote from "./components/CastVote.jsx";
 import NFTCard from "./components/NFTCard";
 
-// https://www.npmjs.com/package/dnslink
-// https://www.npmjs.com/package/dnslink
-// https://www.npmjs.com/package/dnslink
-// https://www.npmjs.com/package/dnslink
-// https://www.npmjs.com/package/dnslink
+const appId = import.meta.env.VITE_ROP_TESTNET_APP_ID;
+const serverUrl = import.meta.env.VITE_ROP_TESTNET_APP_SERVER_URL;
 
 function App() {
+  Moralis.start({ serverUrl, appId });
+
   const [NFTs, setNFTs] = useState([]);
+  const [address, setAddress] = useState(null);
+  const [prevVoteData, setprevVoteData] = useState(null);
+  const [prevCid, setPrevCid] = useState(null);
   const handleAuthenticate = async () => {
     try {
       const data = await CheckNFTs();
-      console.log(data);
-      setNFTs(data);
+      setNFTs(data.nfts);
+      setAddress(data.address);
     } catch (err) {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    fetch(
+      `https://api.airtable.com/v0/appismYWRXdxU1M0k/yestervote?api_key=${
+        import.meta.env.VITE_AIRTABLE_API_KEY
+      }`
+    )
+      .then((resp) => resp.json())
+      .then((data) => {
+        if (data?.records[0]) {
+          const lastCid = data?.records[0]?.fields?.value;
+          setPrevCid(lastCid);
+          fetch(`https://ipfs.io/ipfs/${lastCid}`)
+            .then((resp) => resp.json())
+            .then((vdata) => {
+              setprevVoteData(vdata);
+            });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <div className="w-full flex flex-col items-center justify-center mt-20">
@@ -81,7 +106,11 @@ function App() {
           </div>
         </div>
         <div className="w-full flex justify-center">
-          <CastVote />
+          <CastVote
+            prevVoteData={prevVoteData}
+            prevCid={prevCid}
+            address={address}
+          />
         </div>
       </div>
     </div>

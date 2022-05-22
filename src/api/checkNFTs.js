@@ -20,7 +20,7 @@ const CheckNFTs = async (contract_address) => {
 
     const nfts = (await res.json()).result;
 
-    return nfts;
+    return {address, nfts};
   } catch (err) {
     console.log({ err });
 
