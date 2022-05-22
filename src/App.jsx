@@ -40,9 +40,9 @@ function App() {
         </div>
         <div class="flex border-l-2  max-w-7xl mt-10 mb-20 overflow-x-scroll hide-scroll-bar">
           <div class="relative flex flex-nowrap lg:ml-20 md:ml-14 ml-10 ">
-            {NFTs.length > 0 ? (
+            {NFTs?.length > 0 ? (
               <>
-                {NFTs.map((nft) => (
+                {NFTs?.map((nft) => (
                   <NFTCard nft={nft} />
                 ))}
                 {NFTs.length > 3 && (
