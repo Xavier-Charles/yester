@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import CheckNFTs from "./api/checkNFTs.js";
 import CastVote from "./components/CastVote.jsx";
 import NFTCard from "./components/NFTCard";
+import VoteResults from "./components/VoteResults.jsx";
 
 const appId = import.meta.env.VITE_ROP_TESTNET_APP_ID;
 const serverUrl = import.meta.env.VITE_ROP_TESTNET_APP_SERVER_URL;
@@ -37,7 +38,7 @@ function App() {
           fetch(`https://ipfs.io/ipfs/${lastCid}`)
             .then((resp) => resp.json())
             .then((vdata) => {
-              setprevVoteData(vdata);
+              setprevVoteData(JSON.parse(vdata));
             });
         }
       })
@@ -110,8 +111,19 @@ function App() {
             prevVoteData={prevVoteData}
             prevCid={prevCid}
             address={address}
+            setprevVoteData={setprevVoteData}
           />
         </div>
+        {console.log(prevVoteData)}
+        {prevVoteData?.data?.for && (
+          <div className="w-full flex justify-center">
+            <VoteResults
+              prevCid={prevCid}
+              vagainst={prevVoteData?.data?.against}
+              vfor={prevVoteData?.data?.for}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

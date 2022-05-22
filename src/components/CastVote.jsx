@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import moment from "moment";
 import CheckNFTs from "../api/checkNFTs";
 
-const CastVote = ({ prevVoteData, address, prevCid }) => {
+const CastVote = ({ prevVoteData, address, prevCid, setprevVoteData }) => {
   const [hash, setHash] = useState(null);
 
   const handleVote = (type) => {
@@ -52,7 +52,10 @@ const CastVote = ({ prevVoteData, address, prevCid }) => {
               }
             )
               .then((res) => res.json())
-              .then((resp) => console.log(resp));
+              .then((resp) => {
+                console.log(resp);
+                // setprevVoteData(nextVoteData);
+              });
           }
         });
       });
